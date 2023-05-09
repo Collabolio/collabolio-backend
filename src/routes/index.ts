@@ -1,11 +1,10 @@
-import { Router, Response, Request } from 'express';
+import { Router } from 'express';
+import { helloWorld } from '../controllers';
 
 // Create router
 const router = Router();
 
 // Routes
-router.get('/', (req: Request, res: Response) => {
-  res.send('Hello Collabolio!');
-});
+router.get('/', helloWorld);
 
 export default router;
