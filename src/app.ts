@@ -1,10 +1,15 @@
 import express, { Application } from 'express';
-import route from './routes/index.js';
+import routes from './routes/index.js';
+import cors from 'cors';
 import dotenv from 'dotenv';
 
-dotenv.config();
-const app: Application = express();
+dotenv.config(); // Configure the environment variables
 
-app.use('/', route);
+const app: Application = express(); // Create the Express application
+
+app.use(cors()); // Enable Cross-Origin Resource Sharing (CORS) middleware to allow requests from different origins
+app.use(express.json()); // Parse incoming requests with JSON payloads
+
+app.use('/', routes); // Mount the routes
 
 export default app;
