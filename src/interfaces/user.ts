@@ -1,10 +1,7 @@
-export interface CreateRequest {
+export interface User {
   email: string;
-  password: string;
   emailVerified?: boolean;
   displayName: string;
-  disabled?: boolean;
+  isAdmin: number;
   photoURL?: string;
-  createdAt?: Date;
-  updateAt?: Date;
 }
