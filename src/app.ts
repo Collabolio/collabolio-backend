@@ -1,7 +1,6 @@
 import express, { Application } from 'express';
 import admin from './services/firebase.js';
-import helloWorld from './routes/index.js';
-import authRoutes from './routes/authRoutes.js';
+import routes from './routes/routes.js';
 import cors from 'cors';
 import dotenv from 'dotenv';
 
@@ -13,5 +12,4 @@ export const app: Application = express(); // Create the Express application
 app.use(cors()); // Enable Cross-Origin Resource Sharing (CORS) middleware to allow requests from different origins
 app.use(express.json()); // Parse incoming requests with JSON payloads
 
-app.use('/', helloWorld);
-app.use('/api/auth', authRoutes); // Mount the routes
+app.use('/', routes); // mount the routes
