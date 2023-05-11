@@ -6,7 +6,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 
 dotenv.config(); // Configure the environment variables
-admin.SDK_VERSION; // Check the SDK version
+console.log(`Using Firebase SDK version : ${admin.SDK_VERSION}`); // Check the SDK version
 
 export const app: Application = express(); // Create the Express application
 
