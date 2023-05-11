@@ -1,8 +1,10 @@
-export interface User {
-  id: string;
+export interface CreateRequest {
   email: string;
   password: string;
-  fullName: string;
-  createdAt: Date;
-  updatedAt: Date;
+  emailVerified?: boolean;
+  displayName: string;
+  disabled?: boolean;
+  photoURL?: string;
+  createdAt?: Date;
+  updateAt?: Date;
 }

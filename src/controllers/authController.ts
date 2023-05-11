@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { getAuth } from 'firebase-admin/auth';
+import { CreateRequest } from '../interfaces/user';
 
 export const login = async (req: Request, res: Response): Promise<void> => {
   const uid = req.body.uid;
@@ -7,7 +8,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     .getUser(uid)
     .then((userRecord) => {
       // See the UserRecord reference doc for the contents of userRecord.
-      console.log(`Successfully fetched user data: ${userRecord.email}`);
+      res.json(userRecord);
     })
     .catch((error) => {
       console.log('Error fetching user data:', error);
@@ -15,11 +16,25 @@ export const login = async (req: Request, res: Response): Promise<void> => {
 };
 
 export const register = async (req: Request, res: Response): Promise<void> => {
-  try {
-    res.json('test register');
-    // your register logic here
-    res.status(201).json({ message: 'Registration successful' });
-  } catch (error) {
-    res.status(500).json({ message: 'Something went wrong' });
-  }
+  const createUser: CreateRequest = {
+    email: 'test@example.com',
+    password: 'password123',
+    displayName: 'John Doe',
+    photoURL: 'https://api.dicebear.com/6.x/pixel-art/svg',
+  };
+  getAuth()
+    .createUser({
+      email: createUser.email,
+      password: createUser.password,
+      emailVerified: false,
+      displayName: createUser.displayName,
+      disabled: false,
+      photoURL: createUser.photoURL
+        ? createUser.photoURL
+        : 'https://api.dicebear.com/6.x/pixel-art/svg',
+    })
+    .then((userRecord) => {
+      // See the UserRecord reference doc for the contents of userRecord.
+      res.json(userRecord);
+    });
 };
