@@ -7,7 +7,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     .getUser(uid)
     .then((userRecord) => {
       // See the UserRecord reference doc for the contents of userRecord.
-      console.log(`Successfully fetched user data: ${userRecord.toJSON()}`);
+      console.log(`Successfully fetched user data: ${userRecord.email}`);
     })
     .catch((error) => {
       console.log('Error fetching user data:', error);
