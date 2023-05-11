@@ -2,12 +2,11 @@ import { Request, Response } from 'express';
 import { getAuth } from 'firebase-admin/auth';
 import admin from '../services/firebase';
 
-export const login = async (req: Request, res: Response): Promise<void> => {
+export const getUser = async (req: Request, res: Response): Promise<void> => {
   const uid = req.body.uid;
   getAuth()
-    .getUser(uid)
+    .getUser(uid) // get user by uid
     .then((userRecord) => {
-      // See the UserRecord reference doc for the contents of userRecord.
       res.json(userRecord);
     })
     .catch((error) => {
@@ -47,5 +46,8 @@ export const register = async (req: Request, res: Response): Promise<void> => {
         updatedAt: admin.firestore.FieldValue.serverTimestamp(),
         deletedAt: null,
       });
+    })
+    .catch((error) => {
+      console.log('Error creating user:', error);
     });
 };
