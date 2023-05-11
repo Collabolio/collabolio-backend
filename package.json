@@ -2,13 +2,13 @@
   "name": "express-ts-crud",
   "version": "1.0.0",
   "description": "",
-  "main": "app.js",
+  "main": "server.js",
   "scripts": {
     "build": "rimraf dist && npx tsc",
     "prestart": "npm run build",
-    "start": "node dist/app.js",
+    "start": "node dist/server.js",
     "preserve": "npm run build",
-    "serve": "concurrently \"npx tsc -w\"  \"nodemon dist/app.js\""
+    "serve": "concurrently \"npx tsc -w\"  \"nodemon dist/server.js\""
   },
   "keywords": [],
   "author": "",
