@@ -1,11 +1,15 @@
 import express, { Application } from 'express';
-import route from './routes/index.js';
+import admin from './services/firebase.js';
+import routes from './routes/routes.js';
+import cors from 'cors';
+import dotenv from 'dotenv';
 
-const app: Application = express();
-const port: number = 3000;
+dotenv.config(); // Configure the environment variables
+console.log(`Using Firebase SDK version : ${admin.SDK_VERSION}`); // Check the SDK version
 
-app.use('/', route);
+export const app: Application = express(); // Create the Express application
 
-app.listen(port, () => {
-  console.log(`Example app listening at http://localhost:${port}`);
-});
+app.use(cors()); // Enable Cross-Origin Resource Sharing (CORS) middleware to allow requests from different origins
+app.use(express.json()); // Parse incoming requests with JSON payloads
+
+app.use('/', routes); // mount the routes
