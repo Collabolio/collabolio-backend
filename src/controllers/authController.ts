@@ -2,6 +2,8 @@ import { Request, Response } from 'express';
 import { getAuth } from 'firebase-admin/auth';
 import admin from '../services/firebase';
 
+
+
 export const getUser = async (req: Request, res: Response): Promise<void> => {
   const uid = req.body.uid;
   getAuth()
@@ -49,5 +51,56 @@ export const register = async (req: Request, res: Response): Promise<void> => {
     })
     .catch((error) => {
       console.log('Error creating user:', error);
+    });
+};
+
+export const deleteUser = async (req: Request, res: Response): Promise<void> => {
+  const uid = req.body.uid;
+  getAuth()
+    .deleteUser(uid)
+    .then(async () => {
+      res.json('Delete Success');
+      const userRef = await admin.firestore().collection('users').doc(uid).delete();
+      return userRef;
+    })
+    .catch((error) => {
+      console.log('Error deleting user:', error);
+    });
+};
+
+export const getAllUsers = async (req: Request, res: Response): Promise<void> => {
+  getAuth()
+    .listUsers()
+    .then((userRecord) => {
+      res.json(userRecord);
+    }); 
+
+};
+
+export const updateUser = async (req: Request, res: Response): Promise<void> => {
+  const uid = req.body.uid;
+  getAuth()
+    .updateUser(uid, {
+      email: req.body.email,
+      password: req.body.password,
+      displayName: req.body.displayName,
+      photoURL: req.body.photoURL
+
+    })
+    .then(async (userRecord) =>{
+      res.json(userRecord);
+      const userRef = await admin.firestore().collection('users').doc(uid);
+
+      return userRef.update({
+        email: userRecord.email,
+        displayName: userRecord.displayName,
+        photoURL: userRecord.photoURL,
+        updatedAt: new Date()
+      }
+      );
+    })
+    .catch((error) => {
+      res.json(error);
+      
     });
 };
