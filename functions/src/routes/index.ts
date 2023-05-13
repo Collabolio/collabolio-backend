@@ -1,10 +1,8 @@
-import { Router, Request, Response } from 'express';
-
+import { Router } from 'express';
+import authRoutes from './authRoutes';
 // eslint-disable-next-line new-cap
 const routes = Router();
 
-routes.get('/', (req: Request, res: Response) => {
-  return res.json({ message: 'Hello World' });
-});
+routes.use('/api/auth', authRoutes);
 
 export default routes;
