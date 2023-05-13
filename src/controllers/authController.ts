@@ -52,7 +52,11 @@ export const register = async (req: Request, res: Response): Promise<void> => {
     });
 };
 
+<<<<<<< HEAD
 export const deleteUser = async (
+=======
+export const deleteUserAt = async (
+>>>>>>> 223a9c7 (changing deleteUser to deleteUserAt)
   req: Request,
   res: Response,
 ): Promise<void> => {
