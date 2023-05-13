@@ -52,11 +52,7 @@ export const register = async (req: Request, res: Response): Promise<void> => {
     });
 };
 
-<<<<<<< HEAD
-export const deleteUser = async (
-=======
 export const deleteUserAt = async (
->>>>>>> 223a9c7 (changing deleteUser to deleteUserAt)
   req: Request,
   res: Response,
 ): Promise<void> => {
@@ -106,7 +102,7 @@ export const updateUser = async (
         email: userRecord.email,
         displayName: userRecord.displayName,
         photoURL: userRecord.photoURL,
-        updatedAt: new Date(),
+        updatedAt: admin.firestore.FieldValue.serverTimestamp(),
       });
     })
     .catch((error) => {
