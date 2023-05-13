@@ -6,6 +6,7 @@ import cors from 'cors';
 import routes from './routes';
 
 export { createUserRecord } from './controllers/authController';
+export { deleteUserRecord } from './controllers/authController';
 
 admin.initializeApp();
 
