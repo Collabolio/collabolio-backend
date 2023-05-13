@@ -13,6 +13,20 @@ export const getUser = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
+export const loginUser = async (req: Request, res: Response): Promise<void> => {
+  try {
+    await getAuth()
+      .verifyIdToken(req.body.token)
+      .then(async (decodedToken) => {
+        const userRecord = await getAuth().getUser(decodedToken.uid);
+        res.json(userRecord);
+      });
+  } catch (error) {
+    console.error('Error fetching user data:', error);
+    res.status(500).json({ error: 'Could not fetch user' });
+  }
+};
+
 export const registerUser = async (
   req: Request,
   res: Response,
