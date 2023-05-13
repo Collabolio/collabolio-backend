@@ -1,18 +1,18 @@
 import { Router } from 'express';
 import {
   getUser,
-  register,
-  deleteUserAt,
   getAllUsers,
+  registerUser,
   updateUser,
+  deleteUserAt,
 } from '../controllers/authController';
 
 const router = Router();
 
-router.get('/getUser', getUser);
-router.post('/register', register);
-router.delete('/delete', deleteUserAt);
-router.get('/getAllUsers', getAllUsers);
-router.put('/update', updateUser);
+router.get('/user/:uid', getUser);
+router.get('/users', getAllUsers);
+router.post('/register', registerUser);
+router.put('/user/:uid', updateUser);
+router.delete('/user/:uid', deleteUserAt);
 
 export default router;
