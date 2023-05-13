@@ -13,6 +13,6 @@ router.get('/getUser', getUser);
 router.post('/register', register);
 router.delete('/delete', deleteUserAt);
 router.get('/getAllUsers', getAllUsers);
-router.post('/update', updateUser);
+router.put('/update', updateUser);
 
 export default router;
