@@ -5,7 +5,7 @@ export const createUserRecord = functions.auth
   .user()
   .onCreate(async (user, context) => {
     try {
-      const userRef = await admin.firestore().collection('users').doc(user.uid);
+      const userRef = admin.firestore().collection('users').doc(user.uid);
       await userRef.set({
         uid: user.uid,
         email: user.email,
@@ -32,7 +32,7 @@ export const deleteUserRecord = functions.auth
   .user()
   .onDelete(async (user, context) => {
     try {
-      const userRef = await admin.firestore().collection('users').doc(user.uid);
+      const userRef = admin.firestore().collection('users').doc(user.uid);
       await userRef.update({
         deletedAt: context.timestamp,
         isDeleted: true,
