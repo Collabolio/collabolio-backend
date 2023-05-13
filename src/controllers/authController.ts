@@ -13,7 +13,10 @@ export const getUser = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
-export const register = async (req: Request, res: Response): Promise<void> => {
+export const registerUser = async (
+  req: Request,
+  res: Response,
+): Promise<void> => {
   try {
     const userRecord = await getAuth().createUser({
       email: req.body.email,
