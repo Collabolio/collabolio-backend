@@ -2,13 +2,14 @@ import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 import * as express from 'express';
 
+import routes from './routes';
+
 admin.initializeApp();
 
 const app = express.default();
 
-app.get('/', (req: express.Request, res: express.Response) => {
-  res.send('Hello World!');
-});
+app.use(express.json());
+app.use('/', routes);
 
 // // Start writing functions
 // // https://firebase.google.com/docs/functions/typescript
