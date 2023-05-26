@@ -23,16 +23,19 @@ export const createUserRecord = functions
         uid: user.uid,
         email: user.email,
         emailVerified: user.emailVerified,
-        displayName: user.displayName,
-        photoURL: user.photoURL,
-        phoneNumber: user.phoneNumber,
         providerData: user.providerData,
         createdAt: admin.firestore.FieldValue.serverTimestamp(),
         updatedAt: admin.firestore.FieldValue.serverTimestamp(),
-        deletedAt: null,
         isAdmin: false,
         isBanned: false,
-        isDeleted: false,
+        profile: {
+          displayName: user.displayName,
+          photoURL:
+            user.photoURL ||
+            'https://storage.googleapis.com/collabolio-dev.appspot.com/assets/images/avatars/default-avatar.png',
+          phoneNumber: user.phoneNumber,
+          bio: 'Too lazy to write anything',
+        },
         lastLoginAt: null,
       })
       .catch((error) => {
