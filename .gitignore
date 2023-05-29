@@ -1,3 +1,6 @@
+# serviceAccountKey.json
+/functions/*serviceAccountKey.json
+
 # Logs
 logs
 *.log

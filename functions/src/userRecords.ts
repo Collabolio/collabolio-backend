@@ -1,5 +1,4 @@
 import * as functions from 'firebase-functions';
-import * as admin from 'firebase-admin';
 import { Response } from 'firebase-functions';
 import { UserRecord } from 'firebase-admin/auth';
 import { Users } from './models/Users';
@@ -21,8 +20,8 @@ export const createUserRecord = functions
         email: user.email,
         emailVerified: user.emailVerified,
         providerData: user.providerData,
-        createdAt: admin.firestore.FieldValue.serverTimestamp(),
-        updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+        createdAt: new Date(),
+        updatedAt: new Date(),
         isAdmin: false,
         isBanned: false,
         profile: {
