@@ -2,23 +2,20 @@ import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 import { Response } from 'firebase-functions';
 import { UserRecord } from 'firebase-admin/auth';
-
-const db = admin.firestore();
+import { Users } from './models/Users';
 
 export const getAllUserRecord = functions
   .region('asia-southeast2')
   .https.onRequest(async (_req, res: Response) => {
-    const snapshot = await db.collection('users').orderBy('createdAt').get();
-    const users = snapshot.docs.map((doc) => doc.data());
-    res.send(users).sendStatus(200);
+    await Users.get();
+    res.send(Users).sendStatus(200);
   });
 
 export const createUserRecord = functions
   .region('asia-southeast2')
   .auth.user()
   .onCreate(async (user: UserRecord) => {
-    const userRef = db.collection('users').doc(user.uid);
-    await userRef
+    await Users.child(user.uid)
       .set({
         uid: user.uid,
         email: user.email,
