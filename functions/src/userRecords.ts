@@ -11,11 +11,14 @@ export const createUserRecord = functions
         uid: user.uid,
         email: user.email,
         emailVerified: user.emailVerified,
+        passwordHas: user.passwordHash,
+        passwordSalt: user.passwordSalt,
         providerData: user.providerData,
-        createdAt: new Date(),
-        updatedAt: new Date(),
+        createdAt: user.metadata.creationTime,
+        updatedAt: user.metadata.creationTime,
+        lastLoginAt: user.metadata.lastSignInTime || user.metadata.creationTime,
+        disable: user.disabled,
         isAdmin: false,
-        isBanned: false,
         profile: {
           displayName: user.displayName,
           photoURL:
@@ -24,7 +27,6 @@ export const createUserRecord = functions
           phoneNumber: user.phoneNumber,
           bio: 'Too lazy to write anything',
         },
-        lastLoginAt: null,
       })
       .catch((error) => {
         const { code, message, details } = error;
