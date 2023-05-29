@@ -5,7 +5,7 @@ import { UserRecord } from 'firebase-admin/auth';
 
 const db = admin.firestore();
 
-export const getAllUserRecord = functions
+export const getUserRecords = functions
   .region('asia-southeast2')
   .https.onRequest(async (_req, res: Response) => {
     const snapshot = await db.collection('users').orderBy('createdAt').get();
@@ -18,16 +18,21 @@ export const createUserRecord = functions
   .auth.user()
   .onCreate(async (user: UserRecord) => {
     const userRef = db.collection('users').doc(user.uid);
+    if (!user.email) {
+      return functions.logger.error('Email is not defined');
+    }
     await userRef
       .set({
         uid: user.uid,
         email: user.email,
         emailVerified: user.emailVerified,
+        username: user.email.split('@')[0],
         providerData: user.providerData,
-        createdAt: admin.firestore.FieldValue.serverTimestamp(),
-        updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+        createdAt: user.metadata.creationTime,
+        updatedAt: user.metadata.creationTime,
+        lastLoginAt: user.metadata.lastSignInTime || user.metadata.creationTime,
+        disable: user.disabled,
         isAdmin: false,
-        isBanned: false,
         profile: {
           displayName: user.displayName,
           photoURL:
@@ -36,12 +41,9 @@ export const createUserRecord = functions
           phoneNumber: user.phoneNumber,
           bio: 'Too lazy to write anything',
         },
-        lastLoginAt: null,
       })
       .catch((error) => {
-        const code = error.code;
-        const message = error.message;
-        const details = error.details;
+        const { code, message, details } = error;
         return functions.logger.error(
           `Error code: ${code}, message: ${message}, details: ${details}`,
         );
