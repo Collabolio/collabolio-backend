@@ -1,14 +1,6 @@
 import * as functions from 'firebase-functions';
-import { Response } from 'firebase-functions';
 import { UserRecord } from 'firebase-admin/auth';
 import { Users } from './models/Users';
-
-export const getUserRecords = functions
-  .region('asia-southeast2')
-  .https.onRequest(async (_req, res: Response) => {
-    await Users.get();
-    res.send(Users).sendStatus(200);
-  });
 
 export const createUserRecord = functions
   .region('asia-southeast2')
@@ -35,9 +27,7 @@ export const createUserRecord = functions
         lastLoginAt: null,
       })
       .catch((error) => {
-        const code = error.code;
-        const message = error.message;
-        const details = error.details;
+        const { code, message, details } = error;
         return functions.logger.error(
           `Error code: ${code}, message: ${message}, details: ${details}`,
         );
