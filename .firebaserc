@@ -1,0 +1,13 @@
+{
+  "projects": {
+    "default": "collabolio-dev"
+  },
+  "targets": {},
+  "etags": {
+    "collabolio-dev": {
+      "extensionInstances": {
+        "delete-user-data": "8065a01181873f15488743ccebae087b7363c65c897ad052ea6b8dda059e267c"
+      }
+    }
+  }
+}
