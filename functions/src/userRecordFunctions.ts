@@ -23,7 +23,6 @@ export const createUserRecord = functions
     }
     await userRef
       .set({
-        uid: user.uid,
         email: user.email,
         emailVerified: user.emailVerified,
         username: user.email.split('@')[0],
@@ -48,4 +47,13 @@ export const createUserRecord = functions
           `Error code: ${code}, message: ${message}, details: ${details}`,
         );
       });
+  });
+
+export const setUserUidRecord = functions
+  .region('asia-southeast2')
+  .firestore.document('users/{uid}')
+  .onCreate(async (snapshot) => {
+    const uid = snapshot.id;
+    const userRef = db.collection('users').doc(uid);
+    await userRef.update({ uid });
   });
