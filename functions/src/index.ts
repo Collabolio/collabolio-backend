@@ -2,8 +2,11 @@ import * as admin from 'firebase-admin';
 
 admin.initializeApp();
 
-export { getUserRecords } from './userRecordFunctions';
-export { createUserRecord } from './userRecordFunctions';
+export {
+  getUserRecords,
+  createUserRecord,
+  setUserUidRecord,
+} from './userRecordFunctions';
 // // Start writing functions
 // // https://firebase.google.com/docs/functions/typescript
 //
