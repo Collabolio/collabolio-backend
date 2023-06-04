@@ -55,7 +55,12 @@ export const setUserUidRecord = functions
   .onCreate(async (snapshot) => {
     const uid = snapshot.id;
     const userRef = db.collection('users').doc(uid);
-    await userRef.update({ uid });
+    await userRef.update({ uid }).catch((error) => {
+      const { code, message, details } = error;
+      return functions.logger.error(
+        `Error code: ${code}, message: ${message}, details: ${details}`,
+      );
+    });
   });
 
 export const setSkillUidRecord = functions
@@ -64,7 +69,12 @@ export const setSkillUidRecord = functions
   .onCreate(async (snapshot) => {
     const uid = snapshot.id;
     const userRef = db.collection('skills').doc(uid);
-    await userRef.update({ uid });
+    await userRef.update({ uid }).catch((error) => {
+      const { code, message, details } = error;
+      return functions.logger.error(
+        `Error code: ${code}, message: ${message}, details: ${details}`,
+      );
+    });
   });
 
 export const setUserSkillUidRecord = functions
@@ -102,8 +112,13 @@ export const setUserSkillUidRecord = functions
     });
 
     // Update the user document with the modified skills
-    await userSnapshot.ref.set({ profile: userProfile }, { merge: true });
-
-    console.log('Skills ID updated successfully');
+    await userSnapshot.ref
+      .set({ profile: userProfile }, { merge: true })
+      .catch((error: any) => {
+        const { code, message, details } = error;
+        return functions.logger.error(
+          `Error code: ${code}, message: ${message}, details: ${details}`,
+        );
+      });
     return null;
   });
