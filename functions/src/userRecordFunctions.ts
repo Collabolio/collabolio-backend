@@ -55,5 +55,70 @@ export const setUserUidRecord = functions
   .onCreate(async (snapshot) => {
     const uid = snapshot.id;
     const userRef = db.collection('users').doc(uid);
-    await userRef.update({ uid });
+    await userRef.update({ uid }).catch((error) => {
+      const { code, message, details } = error;
+      return functions.logger.error(
+        `Error code: ${code}, message: ${message}, details: ${details}`,
+      );
+    });
+  });
+
+export const setSkillUidRecord = functions
+  .region('asia-southeast2')
+  .firestore.document('skills/{uid}')
+  .onCreate(async (snapshot) => {
+    const uid = snapshot.id;
+    const userRef = db.collection('skills').doc(uid);
+    await userRef.update({ uid }).catch((error) => {
+      const { code, message, details } = error;
+      return functions.logger.error(
+        `Error code: ${code}, message: ${message}, details: ${details}`,
+      );
+    });
+  });
+
+export const setUserSkillUidRecord = functions
+  .region('asia-southeast2')
+  .firestore.document('users/{userId}')
+  .onWrite(async (change) => {
+    const userSnapshot: any = change.after;
+
+    if (!userSnapshot.exists) {
+      console.log('User document does not exist');
+      return null;
+    }
+
+    const userProfile = userSnapshot.data().profile;
+    const userSkills = userProfile.skills;
+
+    if (!Array.isArray(userSkills) || userSkills.length === 0) {
+      console.log('User has no skills');
+      return null;
+    }
+
+    const skillsSnapshot = await db.collection('skills').get();
+
+    userSkills.forEach((userSkill) => {
+      if (!userSkill.uid && userSkill.name) {
+        const matchingSkill = skillsSnapshot.docs.find(
+          (skillDoc) => skillDoc.data().skill === userSkill.name,
+        );
+
+        if (matchingSkill) {
+          const skillId = matchingSkill.id;
+          userSkill.uid = skillId;
+        }
+      }
+    });
+
+    // Update the user document with the modified skills
+    await userSnapshot.ref
+      .set({ profile: userProfile }, { merge: true })
+      .catch((error: any) => {
+        const { code, message, details } = error;
+        return functions.logger.error(
+          `Error code: ${code}, message: ${message}, details: ${details}`,
+        );
+      });
+    return null;
   });
