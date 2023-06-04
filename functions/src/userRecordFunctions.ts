@@ -101,7 +101,7 @@ export const setUserSkillUidRecord = functions
     userSkills.forEach((userSkill) => {
       if (!userSkill.uid && userSkill.name) {
         const matchingSkill = skillsSnapshot.docs.find(
-          (skillDoc) => skillDoc.data().skill === userSkill.name,
+          (skillDoc) => skillDoc.data().name === userSkill.name,
         );
 
         if (matchingSkill) {
