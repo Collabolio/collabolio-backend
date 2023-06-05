@@ -131,6 +131,6 @@ export const setUserSkillUidRecord = functions
     if (!userData.updatedAt) {
       userData.updatedAt = context.timestamp;
     }
-    await userSnapshot.ref.update({ updatedAt: userData.updatedAt });
+    await userSnapshot.ref.update({ userData });
     return null;
   });
