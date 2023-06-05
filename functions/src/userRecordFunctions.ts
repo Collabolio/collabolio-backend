@@ -128,7 +128,7 @@ export const setUserSkillUidRecord = functions
         );
       });
     await db.collection('users').doc(userSnapshot.id).update({
-      updateAt: context.timestamp,
+      updatedAt: context.timestamp,
     });
     return null;
   });
