@@ -98,12 +98,16 @@ export const setUserSkillUidRecord = functions
 
     const skillsSnapshot = await db.collection('skills').get();
 
-    userSkills.forEach((userSkill) => {
+    userSkills.forEach(async (userSkill) => {
       if (!userSkill.uid && userSkill.name) {
         const matchingSkill = skillsSnapshot.docs.find(
           (skillDoc) => skillDoc.data().name === userSkill.name,
         );
-
+        if (!matchingSkill) {
+          await db.collection('skills').add({
+            name: userSkill.name,
+          });
+        }
         if (matchingSkill) {
           const skillId = matchingSkill.id;
           userSkill.uid = skillId;
