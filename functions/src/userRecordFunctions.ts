@@ -82,6 +82,7 @@ export const setUserSkillUidRecord = functions
   .region('asia-southeast2')
   .firestore.document('users/{userId}')
   .onWrite(async (change, context) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const userSnapshot: any = change.after;
 
     if (!userSnapshot.exists) {
