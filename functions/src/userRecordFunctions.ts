@@ -124,12 +124,7 @@ export const setUserSkillUidRecord = functions
     await userSnapshot.ref.set({ profile: userProfile }, { merge: true });
     batch.update(userSnapshot.ref, { updatedAt: context.timestamp });
 
-    await batch.commit().catch((error) => {
-      const { code, message, details } = error;
-      return functions.logger.error(
-        `Error code: ${code}, message: ${message}, details: ${details}`,
-      );
-    });
+    await batch.commit();
 
     return null;
   });
