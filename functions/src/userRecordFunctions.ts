@@ -88,7 +88,6 @@ export const setUserSkillUidRecord = functions
       return null;
     }
 
-    const userData = userSnapshot.data();
     const userProfile = userSnapshot.data().profile;
     const userSkills = userProfile.skills;
 
@@ -128,9 +127,9 @@ export const setUserSkillUidRecord = functions
           `Error code: ${code}, message: ${message}, details: ${details}`,
         );
       });
-    if (!userData.updatedAt) {
-      userData.updatedAt = context.timestamp;
-    }
-    await userSnapshot.ref.update({ userData });
+    await db.collection('users').doc(userSnapshot.id).set({
+      updatedAt: context.timestamp,
+    });
+
     return null;
   });
