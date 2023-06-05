@@ -80,7 +80,7 @@ export const setSkillUidRecord = functions
 export const setUserSkillUidRecord = functions
   .region('asia-southeast2')
   .firestore.document('users/{userId}')
-  .onWrite(async (change) => {
+  .onWrite(async (change, context) => {
     const userSnapshot: any = change.after;
 
     if (!userSnapshot.exists) {
@@ -127,5 +127,8 @@ export const setUserSkillUidRecord = functions
           `Error code: ${code}, message: ${message}, details: ${details}`,
         );
       });
+    await db.collection('users').doc(userSnapshot.id).update({
+      updateAt: context.timestamp,
+    });
     return null;
   });
