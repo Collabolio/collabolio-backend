@@ -80,8 +80,8 @@ export const setSkillUidRecord = functions
 
 export const setUserSkillUidRecord = functions
   .region('asia-southeast2')
-  .firestore.document('users/{userId}')
-  .onWrite(async (change, context) => {
+  .firestore.document('users/{uid}')
+  .onWrite(async (change) => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const userSnapshot: any = change.after;
 
@@ -122,7 +122,7 @@ export const setUserSkillUidRecord = functions
 
     // Update the user document with the modified skills
     await userSnapshot.ref.set({ profile: userProfile }, { merge: true });
-    batch.update(userSnapshot.ref, { updatedAt: context.timestamp });
+    batch.update(userSnapshot.ref, { updatedAt: new Date() });
 
     await batch.commit();
 
