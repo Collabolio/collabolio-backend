@@ -4,6 +4,7 @@ import { Response } from 'firebase-functions';
 import { UserRecord } from 'firebase-admin/auth';
 
 const db = admin.firestore();
+const batch = db.batch();
 
 export const getUserRecords = functions
   .region('asia-southeast2')
@@ -81,6 +82,7 @@ export const setUserSkillUidRecord = functions
   .region('asia-southeast2')
   .firestore.document('users/{userId}')
   .onWrite(async (change, context) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const userSnapshot: any = change.after;
 
     if (!userSnapshot.exists) {
@@ -88,7 +90,6 @@ export const setUserSkillUidRecord = functions
       return null;
     }
 
-    const userData = userSnapshot.data();
     const userProfile = userSnapshot.data().profile;
     const userSkills = userProfile.skills;
 
@@ -120,17 +121,15 @@ export const setUserSkillUidRecord = functions
     });
 
     // Update the user document with the modified skills
-    await userSnapshot.ref
-      .set({ profile: userProfile }, { merge: true })
-      .catch((error: any) => {
-        const { code, message, details } = error;
-        return functions.logger.error(
-          `Error code: ${code}, message: ${message}, details: ${details}`,
-        );
-      });
-    if (!userData.updatedAt) {
-      userData.updatedAt = context.timestamp;
-    }
-    await userSnapshot.ref.update({ updatedAt: userData.updatedAt });
+    await userSnapshot.ref.set({ profile: userProfile }, { merge: true });
+    batch.update(userSnapshot.ref, { updatedAt: context.timestamp });
+
+    await batch.commit().catch((error) => {
+      const { code, message, details } = error;
+      return functions.logger.error(
+        `Error code: ${code}, message: ${message}, details: ${details}`,
+      );
+    });
+
     return null;
   });
