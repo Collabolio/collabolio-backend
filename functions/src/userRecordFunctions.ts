@@ -156,7 +156,7 @@ export const setUserInterestUidRecord = functions
     }
 
     const userProfile = userSnapshot.data().profile;
-    const userInterests = userProfile.Interests;
+    const userInterests = userProfile.interests;
 
     if (!Array.isArray(userInterests) || userInterests.length === 0) {
       console.log('User has no Interests');
@@ -168,14 +168,14 @@ export const setUserInterestUidRecord = functions
     userInterests.forEach(async (userInterest) => {
       if (!userInterest.uid && userInterest.name) {
         let matchingInterest = InterestsSnapshot.docs.find(
-          (InterestDoc) => InterestDoc.data().name === userInterest.name,
+          (interestDoc) => interestDoc.data().name === userInterest.name,
         );
         if (!matchingInterest) {
           await db.collection('interests').add({
             name: userInterest.name,
           });
           matchingInterest = InterestsSnapshot.docs.find(
-            (InterestDoc) => InterestDoc.data().name === userInterest.name,
+            (interestDoc) => interestDoc.data().name === userInterest.name,
           );
         }
         if (matchingInterest) {
