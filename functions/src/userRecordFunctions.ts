@@ -4,7 +4,6 @@ import { Response } from 'firebase-functions';
 import { UserRecord } from 'firebase-admin/auth';
 
 const db = admin.firestore();
-const batch = db.batch();
 
 export const getUserRecords = functions
   .region('asia-southeast2')
@@ -92,7 +91,7 @@ export const setInterestUidRecord = functions
     });
   });
 
-export const setUserSkillUidRecord = functions
+export const setUserSkillInterestUidRecord = functions
   .region('asia-southeast2')
   .firestore.document('users/{uid}')
   .onWrite(async (change) => {
@@ -106,13 +105,22 @@ export const setUserSkillUidRecord = functions
 
     const userProfile = userSnapshot.data().profile;
     const userSkills = userProfile.skills;
+    const userInterests = userProfile.interests;
 
     if (!Array.isArray(userSkills) || userSkills.length === 0) {
       console.log('User has no skills');
       return null;
     }
 
+    if (!Array.isArray(userInterests) || userInterests.length === 0) {
+      console.log('User has no interests');
+      return null;
+    }
+
     const skillsSnapshot = await db.collection('skills').get();
+    const interestsSnapshot = await db.collection('interests').get();
+
+    const batch = db.batch();
 
     userSkills.forEach(async (userSkill) => {
       if (!userSkill.uid && userSkill.name) {
@@ -134,47 +142,16 @@ export const setUserSkillUidRecord = functions
       }
     });
 
-    // Update the user document with the modified skills
-    await userSnapshot.ref.set({ profile: userProfile }, { merge: true });
-    batch.update(userSnapshot.ref, { updatedAt: new Date() });
-
-    await batch.commit();
-
-    return null;
-  });
-
-export const setUserInterestUidRecord = functions
-  .region('asia-southeast2')
-  .firestore.document('users/{uid}')
-  .onWrite(async (change) => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const userSnapshot: any = change.after;
-
-    if (!userSnapshot.exists) {
-      console.log('User document does not exist');
-      return null;
-    }
-
-    const userProfile = userSnapshot.data().profile;
-    const userInterests = userProfile.interests;
-
-    if (!Array.isArray(userInterests) || userInterests.length === 0) {
-      console.log('User has no Interests');
-      return null;
-    }
-
-    const InterestsSnapshot = await db.collection('interests').get();
-
     userInterests.forEach(async (userInterest) => {
       if (!userInterest.uid && userInterest.name) {
-        let matchingInterest = InterestsSnapshot.docs.find(
+        let matchingInterest = interestsSnapshot.docs.find(
           (interestDoc) => interestDoc.data().name === userInterest.name,
         );
         if (!matchingInterest) {
           await db.collection('interests').add({
             name: userInterest.name,
           });
-          matchingInterest = InterestsSnapshot.docs.find(
+          matchingInterest = interestsSnapshot.docs.find(
             (interestDoc) => interestDoc.data().name === userInterest.name,
           );
         }
@@ -185,11 +162,13 @@ export const setUserInterestUidRecord = functions
       }
     });
 
-    // Update the user document with the modified skills
-    await userSnapshot.ref.set({ profile: userProfile }, { merge: true });
-    batch.update(userSnapshot.ref, { updatedAt: new Date() });
-
+    // Update the user document with the modified skills and interests
+    batch.update(userSnapshot.ref, {
+      'profile.skills': userSkills,
+      'profile.interests': userInterests,
+      // eslint-disable-next-line quote-props
+      updatedAt: new Date(),
+    });
     await batch.commit();
-
     return null;
   });
