@@ -169,8 +169,6 @@ export const setUserSkillInterestUidRecord = functions
     batch.update(userSnapshot.ref, {
       'profile.skills': userSkills,
       'profile.interests': userInterests,
-      // eslint-disable-next-line quote-props
-      updatedAt: new Date(),
     });
     await batch.commit();
 
