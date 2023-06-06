@@ -8,8 +8,7 @@ export {
   setUserUidRecord,
   setSkillUidRecord,
   setInterestUidRecord,
-  setUserSkillUidRecord,
-  setUserInterestUidRecord,
+  setUserSkillInterestUidRecord,
 } from './userRecordFunctions';
 // // Start writing functions
 // // https://firebase.google.com/docs/functions/typescript
