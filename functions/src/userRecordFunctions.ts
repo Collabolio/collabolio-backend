@@ -142,3 +142,54 @@ export const setUserSkillUidRecord = functions
 
     return null;
   });
+
+export const setUserInterestUidRecord = functions
+  .region('asia-southeast2')
+  .firestore.document('users/{uid}')
+  .onWrite(async (change) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const userSnapshot: any = change.after;
+
+    if (!userSnapshot.exists) {
+      console.log('User document does not exist');
+      return null;
+    }
+
+    const userProfile = userSnapshot.data().profile;
+    const userInterests = userProfile.Interests;
+
+    if (!Array.isArray(userInterests) || userInterests.length === 0) {
+      console.log('User has no Interests');
+      return null;
+    }
+
+    const InterestsSnapshot = await db.collection('interests').get();
+
+    userInterests.forEach(async (userInterest) => {
+      if (!userInterest.uid && userInterest.name) {
+        let matchingInterest = InterestsSnapshot.docs.find(
+          (InterestDoc) => InterestDoc.data().name === userInterest.name,
+        );
+        if (!matchingInterest) {
+          await db.collection('interests').add({
+            name: userInterest.name,
+          });
+          matchingInterest = InterestsSnapshot.docs.find(
+            (InterestDoc) => InterestDoc.data().name === userInterest.name,
+          );
+        }
+        if (matchingInterest) {
+          const interestId = matchingInterest.id;
+          userInterest.uid = interestId;
+        }
+      }
+    });
+
+    // Update the user document with the modified skills
+    await userSnapshot.ref.set({ profile: userProfile }, { merge: true });
+    batch.update(userSnapshot.ref, { updatedAt: new Date() });
+
+    await batch.commit();
+
+    return null;
+  });
