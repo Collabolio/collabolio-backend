@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 import { Response } from 'firebase-functions';
@@ -210,16 +211,32 @@ export const generateUserStoryRecordWithOpenAI = functions
     const userData = await userSnapshot.data();
     const userProfile = userData.profile;
 
-    const response = openai.createCompletion({
-      model: 'text-davinci-002',
-      prompt: `Create me user story for my profile,
-      portofolio purpose based on this data : 
-      ${userData}`,
+    const response = openai.createChatCompletion({
+      model: 'gpt-3.5-turbo',
+      messages: [
+        {
+          role: 'user',
+          content: `create data like this :
+          Fathir is a 27-year-old male living in Panunggangan, who is passionate about frontend development. He is skilled in using the Tailwind CSS framework and has a keen interest in learning more about the field. Although he has not yet verified his email address, Fathir is actively using his profile to showcase his skills and connect with other developers.
+  
+          In his spare time, Fathir enjoys reading articles on frontend development and practicing his coding skills. He is always looking for ways to improve his craft and stay up-to-date with the latest trends and technologies. Fathir's passion for frontend development has led him to pursue various projects and experiences, and he is eager to continue growing and learning in the field.
+          
+          Despite his busy schedule, Fathir makes time for his personal life as well. He enjoys spending time with his friends and family, exploring new places, and trying new foods. Fathir's positive attitude and dedication to his craft make him a valuable asset to any team or project he is involved in.
+          
+          Overall, Fathir is a talented and driven individual who is passionate about frontend development and eager to make a difference in the field. With his skills, experience, and determination, he is sure to achieve great things in his career and personal life.
+          
+          Instead using this data :
+          ${userData}
+          `,
+        },
+      ],
     });
 
     if (!response) return console.log('response is null', response);
 
-    const story = await response.then((res) => res.data.choices[0].text);
+    const story = await response.then(
+      (res) => res.data.choices[0].message?.content,
+    );
 
     userProfile.story = story;
 
