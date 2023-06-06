@@ -95,12 +95,15 @@ export const setUserSkillInterestUidRecord = functions
   .region('asia-southeast2')
   .firestore.document('users/{uid}')
   .onWrite(async (change) => {
+    if (change.after.isEqual(change.before)) {
+      return;
+    }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const userSnapshot: any = change.after;
 
     if (!userSnapshot.exists) {
       console.log('User document does not exist');
-      return null;
+      return;
     }
 
     const userProfile = userSnapshot.data().profile;
@@ -109,12 +112,12 @@ export const setUserSkillInterestUidRecord = functions
 
     if (!Array.isArray(userSkills) || userSkills.length === 0) {
       console.log('User has no skills');
-      return null;
+      return;
     }
 
     if (!Array.isArray(userInterests) || userInterests.length === 0) {
       console.log('User has no interests');
-      return null;
+      return;
     }
 
     const skillsSnapshot = await db.collection('skills').get();
@@ -170,5 +173,7 @@ export const setUserSkillInterestUidRecord = functions
       updatedAt: new Date(),
     });
     await batch.commit();
-    return null;
+
+    await Promise.resolve();
+    return;
   });
