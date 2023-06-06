@@ -78,6 +78,20 @@ export const setSkillUidRecord = functions
     });
   });
 
+export const setInterestUidRecord = functions
+  .region('asia-southeast2')
+  .firestore.document('interests/{uid}')
+  .onCreate(async (snapshot) => {
+    const uid = snapshot.id;
+    const userRef = db.collection('interests').doc(uid);
+    await userRef.update({ uid }).catch((error) => {
+      const { code, message, details } = error;
+      return functions.logger.error(
+        `Error code: ${code}, message: ${message}, details: ${details}`,
+      );
+    });
+  });
+
 export const setUserSkillUidRecord = functions
   .region('asia-southeast2')
   .firestore.document('users/{uid}')
