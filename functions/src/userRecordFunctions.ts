@@ -2,6 +2,7 @@ import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 import { Response } from 'firebase-functions';
 import { UserRecord } from 'firebase-admin/auth';
+import { openai } from './services/openai';
 
 const db = admin.firestore();
 const batch = db.batch();
@@ -192,4 +193,41 @@ export const setUserInterestUidRecord = functions
     await batch.commit();
 
     return null;
+  });
+
+export const generateUserStoryRecordWithOpenAI = functions
+  .region('asia-southeast2')
+  .firestore.document('users/{uid}')
+  .onWrite(async (change) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const userSnapshot: any = change.after;
+
+    if (!userSnapshot.exists) {
+      console.log('User document does not exist');
+      return null;
+    }
+
+    const userData = await userSnapshot.data();
+    const userProfile = userData.profile;
+
+    const response = openai.createChatCompletion({
+      model: 'gpt-3.5-turbo',
+      messages: [
+        {
+          role: 'user',
+          content: `Create me user story for my profile,
+        portofolio purpose based on this data : 
+        ${userData}
+        `,
+        },
+      ],
+    });
+
+    if (!response) return console.log('response is null', response);
+
+    const story = await response.then((res) => res.data.choices[0].message);
+
+    userProfile.story = story;
+
+    await userSnapshot.ref.set({ profile: userProfile }, { merge: true });
   });
