@@ -209,8 +209,6 @@ export const generateUserStoryRecordWithOpenAI = functions
     }
 
     const userData = await userSnapshot.data();
-    const userProfile = userData.profile;
-
     const response = openai.createChatCompletion({
       model: 'gpt-3.5-turbo',
       messages: [
@@ -238,7 +236,7 @@ export const generateUserStoryRecordWithOpenAI = functions
       (res) => res.data.choices[0].message?.content,
     );
 
-    userProfile.story = story;
+    batch.update(userSnapshot.ref, { 'profile.story': story });
 
-    await userSnapshot.ref.set({ profile: userProfile }, { merge: true });
+    await batch.commit();
   });
