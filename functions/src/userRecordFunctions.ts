@@ -209,12 +209,13 @@ export const generateUserStoryRecordWithOpenAI = functions
     }
 
     const userData = await userSnapshot.data();
-    const response = openai.createChatCompletion({
-      model: 'gpt-3.5-turbo',
-      messages: [
-        {
-          role: 'user',
-          content: `create data like this :
+    openai
+      .createChatCompletion({
+        model: 'gpt-3.5-turbo',
+        messages: [
+          {
+            role: 'user',
+            content: `create data like this :
           Fathir is a 27-year-old male living in Panunggangan, who is passionate about frontend development. He is skilled in using the Tailwind CSS framework and has a keen interest in learning more about the field. Although he has not yet verified his email address, Fathir is actively using his profile to showcase his skills and connect with other developers.
   
           In his spare time, Fathir enjoys reading articles on frontend development and practicing his coding skills. He is always looking for ways to improve his craft and stay up-to-date with the latest trends and technologies. Fathir's passion for frontend development has led him to pursue various projects and experiences, and he is eager to continue growing and learning in the field.
@@ -226,17 +227,15 @@ export const generateUserStoryRecordWithOpenAI = functions
           Instead using this data :
           ${userData}
           `,
-        },
-      ],
-    });
+          },
+        ],
+      })
+      .then(async (res) => {
+        const story = res.data.choices[0].message?.content;
 
-    if (!response) return console.log('response is null', response);
+        batch.update(userSnapshot.ref, { 'profile.story': story });
 
-    const story = await response.then(
-      (res) => res.data.choices[0].message?.content,
-    );
-
-    batch.update(userSnapshot.ref, { 'profile.story': story });
-
-    await batch.commit();
+        await batch.commit();
+      });
+    return null;
   });
