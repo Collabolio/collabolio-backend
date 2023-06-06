@@ -210,22 +210,16 @@ export const generateUserStoryRecordWithOpenAI = functions
     const userData = await userSnapshot.data();
     const userProfile = userData.profile;
 
-    const response = openai.createChatCompletion({
-      model: 'gpt-3.5-turbo',
-      messages: [
-        {
-          role: 'user',
-          content: `Create me user story for my profile,
-        portofolio purpose based on this data : 
-        ${userData}
-        `,
-        },
-      ],
+    const response = openai.createCompletion({
+      model: 'text-davinci-002',
+      prompt: `Create me user story for my profile,
+      portofolio purpose based on this data : 
+      ${userData}`,
     });
 
     if (!response) return console.log('response is null', response);
 
-    const story = await response.then((res) => res.data.choices[0].message);
+    const story = await response.then((res) => res.data.choices[0].text);
 
     userProfile.story = story;
 
