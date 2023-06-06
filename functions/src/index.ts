@@ -10,6 +10,7 @@ export {
   setInterestUidRecord,
   setUserSkillUidRecord,
   setUserInterestUidRecord,
+  generateUserStoryRecordWithOpenAI,
 } from './userRecordFunctions';
 // // Start writing functions
 // // https://firebase.google.com/docs/functions/typescript
