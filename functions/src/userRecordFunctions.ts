@@ -49,6 +49,19 @@ export const createUserRecord = functions
       });
   });
 
+export const setUpdatedAtRecord = functions
+  .region('asia-southeast2')
+  .firestore.document('users/{uid}')
+  .onUpdate(async (snapshot) => {
+    if (snapshot.before.data().time !== snapshot.after.data().time) {
+      return;
+    }
+    const userRef = db.collection('users').doc(snapshot.after.id);
+    await userRef.update({
+      updatedAt: snapshot.after.updateTime,
+    });
+  });
+
 export const setUserUidRecord = functions
   .region('asia-southeast2')
   .firestore.document('users/{uid}')
@@ -94,12 +107,12 @@ export const setInterestUidRecord = functions
 export const setUserSkillInterestUidRecord = functions
   .region('asia-southeast2')
   .firestore.document('users/{uid}')
-  .onWrite(async (change) => {
-    if (change.after.isEqual(change.before)) {
+  .onWrite(async (snapshot) => {
+    if (snapshot.after.isEqual(snapshot.before)) {
       return;
     }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const userSnapshot: any = change.after;
+    const userSnapshot: any = snapshot.after;
 
     if (!userSnapshot.exists) {
       console.log('User document does not exist');
