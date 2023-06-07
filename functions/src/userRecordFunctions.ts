@@ -53,7 +53,7 @@ export const setUpdatedAtRecord = functions
   .region('asia-southeast2')
   .firestore.document('users/{uid}')
   .onUpdate(async (snapshot) => {
-    if (snapshot.before.data().time !== snapshot.after.data().time) {
+    if (snapshot.before.data().updatedAt !== snapshot.after.data().updatedAt) {
       return;
     }
     const userRef = db.collection('users').doc(snapshot.after.id);
