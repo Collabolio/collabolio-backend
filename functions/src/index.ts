@@ -5,6 +5,7 @@ admin.initializeApp();
 export {
   getUserRecords,
   createUserRecord,
+  setUpdatedAtRecord,
   setUserUidRecord,
   setSkillUidRecord,
   setInterestUidRecord,
