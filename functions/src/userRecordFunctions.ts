@@ -27,9 +27,11 @@ export const createUserRecord = functions
         emailVerified: user.emailVerified,
         username: user.email.split('@')[0],
         providerData: user.providerData,
-        createdAt: user.metadata.creationTime,
-        updatedAt: user.metadata.creationTime,
-        lastLoginAt: user.metadata.lastSignInTime || user.metadata.creationTime,
+        createdAt: admin.firestore.FieldValue.serverTimestamp(),
+        updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+        lastLoginAt:
+          user.metadata.lastSignInTime ||
+          admin.firestore.FieldValue.serverTimestamp(),
         disable: user.disabled,
         isAdmin: false,
         profile: {
